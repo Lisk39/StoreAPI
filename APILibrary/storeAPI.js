@@ -68,8 +68,8 @@ module.exports =
             
         }
         var ratingsList = new Array();
-        //ratingsList.List = [];
-        //filter through list of store items and add the iemt to Ratings database if it is not already there
+        
+        //filter through list of store items and add the items to array to send to Ratings API  
         for (store in data.stores) {
     
             for (item in data.stores[store].Store_items) {
@@ -88,7 +88,7 @@ module.exports =
         
         
         try{
-
+            //send list of items to be added to Ratings API
             await fetch('http://localhost:8083/ratings/adddata', {
                     method: 'Post',
                     body: JSON.stringify(ratingsList), // string or object
@@ -108,6 +108,7 @@ module.exports =
         
     
         try{
+            //add new store info to db
             await collection.insert(data);
             var returnJson = new Object();
              
@@ -130,13 +131,10 @@ module.exports =
 
         const DB = client.db('Stores');
 
-        //const DB2 = client.db('Ratings');
-
-
+       
 
         const collection = await DB.collection('Stores'); // or DB.createCollection(nameOfCollection);
 
-        //const collection2 = await DB2.collection('Ratings'); // or DB.createCollection(nameOfCollection);
         //get list of items in stores
         let findResult = await collection.findOne(
             // 'stores' : { 'Store_id': "2845" }
@@ -149,7 +147,7 @@ module.exports =
 
             for (item in findResult.stores[store].Store_items) {
                 let thing = findResult.stores[store].Store_items[item];
-                
+                //get item from rating db via Rating API
                 let response = await fetch('http://localhost:8083/ratings/findRate', {
                     method: 'Post',
                     body: JSON.stringify(thing), // string or object
